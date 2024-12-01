@@ -1,89 +1,109 @@
-import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const [acceleration, setAcceleration] = useState({ x: null, y: null, z: null });
-  const [rotationRate, setRotationRate] = useState({ alpha: null, beta: null, gamma: null });
-  const [orientation, setOrientation] = useState({ alpha: null, beta: null, gamma: null });
-  const [errorMessage, setErrorMessage] = useState("");
+  const [motionData, setMotionData] = useState({
+    acceleration: { x: 0, y: 0, z: 0 },
+    rotationRate: { alpha: 0, beta: 0, gamma: 0 },
+  });
+
+  const [orientationData, setOrientationData] = useState({
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+  });
+
+  const [location, setLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
+
+  const ACCELERATION_THRESHOLD = 0.5; // Minimum threshold to consider motion data valid
 
   useEffect(() => {
-    // Check if DeviceMotionEvent is supported
-    const handleDeviceMotion = (event) => {
+    const handleMotion = (event) => {
       const { acceleration, rotationRate } = event;
-      setAcceleration({
-        x: acceleration?.x ?? null,
-        y: acceleration?.y ?? null,
-        z: acceleration?.z ?? null,
-      });
-      setRotationRate({
-        alpha: rotationRate?.alpha ?? null,
-        beta: rotationRate?.beta ?? null,
-        gamma: rotationRate?.gamma ?? null,
+
+      const filterValue = (value) => (Math.abs(value) > ACCELERATION_THRESHOLD ? value : 0);
+
+      setMotionData({
+        acceleration: {
+          x: filterValue(acceleration?.x || 0),
+          y: filterValue(acceleration?.y || 0),
+          z: filterValue(acceleration?.z || 0),
+        },
+        rotationRate: {
+          alpha: rotationRate?.alpha || 0,
+          beta: rotationRate?.beta || 0,
+          gamma: rotationRate?.gamma || 0,
+        },
       });
     };
 
-    // Check if DeviceOrientationEvent is supported
-    const handleDeviceOrientation = (event) => {
-      setOrientation({
-        alpha: event.alpha ?? null,
-        beta: event.beta ?? null,
-        gamma: event.gamma ?? null,
+    const handleOrientation = (event) => {
+      const { alpha, beta, gamma } = event;
+
+      setOrientationData({
+        alpha: alpha || 0,
+        beta: beta || 0,
+        gamma: gamma || 0,
       });
     };
 
-    if (window.DeviceMotionEvent || window.DeviceOrientationEvent) {
-      if (typeof DeviceMotionEvent.requestPermission === "function") {
-        // For iOS: Request permission
-        DeviceMotionEvent.requestPermission()
-          .then((response) => {
-            if (response === "granted") {
-              window.addEventListener("devicemotion", handleDeviceMotion);
-              window.addEventListener("deviceorientation", handleDeviceOrientation);
-            } else {
-              setErrorMessage("Permission denied for motion sensors.");
-            }
-          })
-          .catch((error) => setErrorMessage(error.message));
+    const getGeolocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setLocation({ latitude, longitude });
+          },
+          (error) => {
+            console.error("Error fetching geolocation:", error.message);
+          }
+        );
       } else {
-        // Non-iOS browsers
-        window.addEventListener("devicemotion", handleDeviceMotion);
-        window.addEventListener("deviceorientation", handleDeviceOrientation);
+        console.error("Geolocation is not supported by this browser.");
       }
-    } else {
-      setErrorMessage("Motion and orientation sensors are not supported on this device.");
-    }
+    };
 
+    // Add Event Listeners
+    window.addEventListener("devicemotion", handleMotion);
+    window.addEventListener("deviceorientation", handleOrientation);
+
+    // Fetch Geolocation
+    getGeolocation();
+
+    // Cleanup
     return () => {
-      // Cleanup event listeners
-      window.removeEventListener("devicemotion", handleDeviceMotion);
-      window.removeEventListener("deviceorientation", handleDeviceOrientation);
+      window.removeEventListener("devicemotion", handleMotion);
+      window.removeEventListener("deviceorientation", handleOrientation);
     };
   }, []);
 
   return (
     <div className="App">
-      <h1>Gyroscope & Accelerometer Data</h1>
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-      <div>
-        <h2>Acceleration</h2>
-        <p>X: {acceleration.x}</p>
-        <p>Y: {acceleration.y}</p>
-        <p>Z: {acceleration.z}</p>
-      </div>
-      <div>
-        <h2>Rotation Rate</h2>
-        <p>Alpha (z-axis): {rotationRate.alpha}</p>
-        <p>Beta (x-axis): {rotationRate.beta}</p>
-        <p>Gamma (y-axis): {rotationRate.gamma}</p>
-      </div>
-      <div>
-        <h2>Orientation</h2>
-        <p>Alpha (rotation around z-axis): {orientation.alpha}</p>
-        <p>Beta (tilt front-to-back): {orientation.beta}</p>
-        <p>Gamma (tilt side-to-side): {orientation.gamma}</p>
-      </div>
+      <h1>Sensor Data</h1>
+
+      <h2>Motion</h2>
+      <p>
+        Acceleration (m/s²): <br />
+        X: {motionData.acceleration.x.toFixed(2)}, Y: {motionData.acceleration.y.toFixed(2)}, Z: {motionData.acceleration.z.toFixed(2)}
+      </p>
+      <p>
+        Rotation Rate (deg/s): <br />
+        Alpha: {motionData.rotationRate.alpha.toFixed(2)}, Beta: {motionData.rotationRate.beta.toFixed(2)}, Gamma: {motionData.rotationRate.gamma.toFixed(2)}
+      </p>
+
+      <h2>Orientation</h2>
+      <p>
+        Alpha: {orientationData.alpha.toFixed(2)}, Beta: {orientationData.beta.toFixed(2)}, Gamma: {orientationData.gamma.toFixed(2)}
+      </p>
+
+      <h2>Location</h2>
+      <p>
+        Latitude: {location.latitude?.toFixed(2) || "Fetching..."} <br />
+        Longitude: {location.longitude?.toFixed(2) || "Fetching..."}
+      </p>
     </div>
   );
 }
