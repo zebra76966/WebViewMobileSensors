@@ -59,10 +59,12 @@ function App() {
           },
           (error) => {
             console.error("Error fetching geolocation:", error.message);
+            setLocation({ latitude: null, longitude: null });
           }
         );
       } else {
         console.error("Geolocation is not supported by this browser.");
+        setLocation({ latitude: null, longitude: null });
       }
     };
 
