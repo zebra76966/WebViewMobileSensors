@@ -59,24 +59,26 @@ function App() {
           },
           (error) => {
             console.error("Error fetching geolocation:", error.message);
-            setLocation({ latitude: null, longitude: null });
           }
         );
       } else {
         console.error("Geolocation is not supported by this browser.");
-        setLocation({ latitude: null, longitude: null });
       }
     };
 
-    // Add Event Listeners
+    // Add Event Listeners for motion and orientation
     window.addEventListener("devicemotion", handleMotion);
     window.addEventListener("deviceorientation", handleOrientation);
 
-    // Fetch Geolocation
+    // Initial geolocation fetch
     getGeolocation();
 
-    // Cleanup
+    // Update geolocation every 1 minute (60000ms)
+    const geoInterval = setInterval(getGeolocation, 60000);
+
+    // Cleanup function to clear the interval and event listeners
     return () => {
+      clearInterval(geoInterval); // Stop updating location
       window.removeEventListener("devicemotion", handleMotion);
       window.removeEventListener("deviceorientation", handleOrientation);
     };
