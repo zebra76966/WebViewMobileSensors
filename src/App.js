@@ -18,6 +18,8 @@ function App() {
     longitude: null,
   });
 
+  const [ambientLight, setAmbientLight] = useState(null);
+
   const ACCELERATION_THRESHOLD = 0.5; // Minimum threshold to consider motion data valid
 
   useEffect(() => {
@@ -76,11 +78,33 @@ function App() {
     // Update geolocation every 1 minute (60000ms)
     const geoInterval = setInterval(getGeolocation, 60000);
 
-    // Cleanup function to clear the interval and event listeners
+    // Check for Ambient Light Sensor API
+    let sensor;
+    if ("AmbientLightSensor" in window) {
+      try {
+        sensor = new AmbientLightSensor();
+        sensor.addEventListener("reading", () => {
+          setAmbientLight(sensor.illuminance);
+        });
+        sensor.addEventListener("error", (error) => {
+          console.error("Ambient Light Sensor error:", error.message);
+        });
+        sensor.start();
+      } catch (error) {
+        console.error("Ambient Light Sensor failed to start:", error.message);
+      }
+    } else {
+      console.warn("Ambient Light Sensor is not supported by this browser.");
+    }
+
+    // Cleanup function
     return () => {
       clearInterval(geoInterval); // Stop updating location
       window.removeEventListener("devicemotion", handleMotion);
       window.removeEventListener("deviceorientation", handleOrientation);
+      if (sensor) {
+        sensor.stop();
+      }
     };
   }, []);
 
@@ -108,6 +132,9 @@ function App() {
         Latitude: {location.latitude?.toFixed(2) || "Fetching..."} <br />
         Longitude: {location.longitude?.toFixed(2) || "Fetching..."}
       </p>
+
+      <h2>Ambient Light</h2>
+      <p>Illuminance: {ambientLight !== null ? `${ambientLight.toFixed(2)} lux` : "Not supported or fetching..."}</p>
     </div>
   );
 }
