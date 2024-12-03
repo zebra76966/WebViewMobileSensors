@@ -70,24 +70,25 @@ function App() {
     };
 
     // Ambient Light Sensor
-    // const initAmbientLightSensor = () => {
-    //   if ("AmbientLightSensor" in window) {
-    //     try {
-    //       const sensor = new AmbientLightSensor();
-    //       sensor.addEventListener("reading", () => {
-    //         setAmbientLight(sensor.illuminance);
-    //       });
-    //       sensor.addEventListener("error", (event) => {
-    //         console.error("Ambient Light Sensor error:", event.error.message);
-    //       });
-    //       sensor.start();
-    //     } catch (error) {
-    //       console.error("Error initializing Ambient Light Sensor:", error.message);
-    //     }
-    //   } else {
-    //     console.warn("Ambient Light Sensor is not supported by this browser.");
-    //   }
-    // };
+    const initAmbientLightSensor = () => {
+      if ("AmbientLightSensor" in window) {
+        try {
+          // eslint-disable-next-line no-undef
+          const sensor = new AmbientLightSensor();
+          sensor.addEventListener("reading", () => {
+            setAmbientLight(sensor.illuminance);
+          });
+          sensor.addEventListener("error", (event) => {
+            console.error("Ambient Light Sensor error:", event.error.message);
+          });
+          sensor.start();
+        } catch (error) {
+          console.warn("Error initializing Ambient Light Sensor:", error.message);
+        }
+      } else {
+        console.warn("Ambient Light Sensor is not supported by this browser.");
+      }
+    };
 
     // Add Event Listeners for motion and orientation
     window.addEventListener("devicemotion", handleMotion);
@@ -95,10 +96,10 @@ function App() {
 
     // Initial geolocation and sensor initialization
     getGeolocation();
-    // initAmbientLightSensor();
+    initAmbientLightSensor();
 
     // Update geolocation every 1 minute (60000ms)
-    const geoInterval = setInterval(getGeolocation, 60000);
+    const geoInterval = setInterval(getGeolocation, 6000);
 
     // Cleanup function
     return () => {
@@ -139,7 +140,7 @@ function App() {
             <div class="card text-white bg-primary mb-3 w-100 shadow ">
               <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
                 Acceleration (m/s²)
-                <i className="fa fa-tachometer"></i>
+                <i className="fa fa-tachometer fs-2"></i>
               </div>
               <div class="card-body">
                 <div className="w-100 d-flex align-items-center justify-content-between">
@@ -162,7 +163,7 @@ function App() {
             <div class="card text-white bg-dark mb-3 w-100 shadow ">
               <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
                 Rotation Rate (deg/s)
-                <i className="fa fa-rotate-left"></i>
+                <i className="fa fa-rotate-left fs-2"></i>
               </div>
               <div class="card-body">
                 <div className="w-100 d-flex align-items-center justify-content-between">
@@ -185,7 +186,7 @@ function App() {
             <div class="card text-white bg-warning mb-3 w-100 shadow ">
               <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
                 Orientation(deg/s)
-                <i className="fa fa-ellipsis-v"></i>
+                <i className="fa fa-ellipsis-v fs-2"></i>
               </div>
               <div class="card-body">
                 <div className="w-100 d-flex align-items-center justify-content-between">
@@ -208,7 +209,7 @@ function App() {
             <div class="card text-white bg-info mb-3 w-100 shadow ">
               <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
                 Location
-                <i className="fa fa-location-arrow"></i>
+                <i className="fa fa-location-arrow fs-2"></i>
               </div>
               <div class="card-body">
                 <div className="w-100 d-flex align-items-center justify-content-between">
@@ -227,7 +228,7 @@ function App() {
             <div class="card text-white  mb-3 w-100 shadow " style={{ background: "coral" }}>
               <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
                 Ambient Light
-                <i className="fa fa-sun-o"></i>
+                <i className="fa fa-sun-o fs-2"></i>
               </div>
               <div class="card-body">
                 <div className="w-100 d-flex align-items-center justify-content-between">
@@ -249,7 +250,7 @@ function App() {
             <div class="card text-white bg-dark mb-3 w-100 shadow ">
               <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
                 Camera
-                <i className="fa fa-tachometer"></i>
+                <i className="fa fa-camera fs-2"></i>
               </div>
               <div class="card-body">
                 <div className="w-100 ">
