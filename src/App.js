@@ -18,9 +18,10 @@ function App() {
     longitude: null,
   });
 
-  const [ambientLight, setAmbientLight] = useState(null);
+  const [ambientLight, setAmbientLight] = useState(null); // For ambient light sensor data
+  const [selectedImage, setSelectedImage] = useState(null); // For uploaded image
 
-  const ACCELERATION_THRESHOLD = 0.5; // Minimum threshold to consider motion data valid
+  const ACCELERATION_THRESHOLD = 0.5;
 
   useEffect(() => {
     const handleMotion = (event) => {
@@ -68,45 +69,64 @@ function App() {
       }
     };
 
+    // Ambient Light Sensor
+    const initAmbientLightSensor = () => {
+      if ("AmbientLightSensor" in window) {
+        try {
+          const sensor = new AmbientLightSensor();
+          sensor.addEventListener("reading", () => {
+            setAmbientLight(sensor.illuminance);
+          });
+          sensor.addEventListener("error", (event) => {
+            console.error("Ambient Light Sensor error:", event.error.message);
+          });
+          sensor.start();
+        } catch (error) {
+          console.error("Error initializing Ambient Light Sensor:", error.message);
+        }
+      } else {
+        console.warn("Ambient Light Sensor is not supported by this browser.");
+      }
+    };
+
     // Add Event Listeners for motion and orientation
     window.addEventListener("devicemotion", handleMotion);
     window.addEventListener("deviceorientation", handleOrientation);
 
-    // Initial geolocation fetch
+    // Initial geolocation and sensor initialization
     getGeolocation();
+    initAmbientLightSensor();
 
     // Update geolocation every 1 minute (60000ms)
     const geoInterval = setInterval(getGeolocation, 60000);
 
-    // Check for Ambient Light Sensor API
-    let sensor;
-    if ("AmbientLightSensor" in window) {
-      try {
-        sensor = new AmbientLightSensor();
-        sensor.addEventListener("reading", () => {
-          setAmbientLight(sensor.illuminance);
-        });
-        sensor.addEventListener("error", (error) => {
-          console.error("Ambient Light Sensor error:", error.message);
-        });
-        sensor.start();
-      } catch (error) {
-        console.error("Ambient Light Sensor failed to start:", error.message);
-      }
-    } else {
-      console.warn("Ambient Light Sensor is not supported by this browser.");
-    }
-
     // Cleanup function
     return () => {
-      clearInterval(geoInterval); // Stop updating location
+      clearInterval(geoInterval);
       window.removeEventListener("devicemotion", handleMotion);
       window.removeEventListener("deviceorientation", handleOrientation);
-      if (sensor) {
-        sensor.stop();
-      }
     };
   }, []);
+
+  // Placeholder function for uploading image
+  const uploadImageToServer = async (imageFile) => {
+    try {
+      console.log("Uploading image to server:", imageFile);
+      // Add API call logic here, e.g., Axios or fetch.
+    } catch (error) {
+      console.error("Error uploading image:", error.message);
+    }
+  };
+
+  // Handle image upload
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file));
+      // Placeholder for uploading image
+      uploadImageToServer(file);
+    }
+  };
 
   return (
     <div className="App">
@@ -134,7 +154,16 @@ function App() {
       </p>
 
       <h2>Ambient Light</h2>
-      <p>Illuminance: {ambientLight !== null ? `${ambientLight.toFixed(2)} lux` : "Not supported or fetching..."}</p>
+      <p>Illuminance: {ambientLight !== null ? `${ambientLight} lux` : "Fetching..."}</p>
+
+      <h2>Camera</h2>
+      <input type="file" accept="image/*" onChange={handleImageUpload} />
+      {selectedImage && (
+        <div>
+          <h3>Uploaded Image:</h3>
+          <img src={selectedImage} alt="Uploaded Preview" style={{ width: "300px", marginTop: "10px" }} />
+        </div>
+      )}
     </div>
   );
 }
