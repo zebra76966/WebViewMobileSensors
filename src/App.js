@@ -71,22 +71,18 @@ function App() {
 
     // Ambient Light Sensor
     const initAmbientLightSensor = () => {
-      if ("AmbientLightSensor" in window) {
-        try {
-          // eslint-disable-next-line no-undef
-          const sensor = new AmbientLightSensor();
-          sensor.addEventListener("reading", () => {
-            setAmbientLight(sensor.illuminance);
-          });
-          sensor.addEventListener("error", (event) => {
-            console.error("Ambient Light Sensor error:", event.error.message);
-          });
-          sensor.start();
-        } catch (error) {
-          console.warn("Error initializing Ambient Light Sensor:", error.message);
-        }
-      } else {
-        console.warn("Ambient Light Sensor is not supported by this browser.");
+      try {
+        // eslint-disable-next-line no-undef
+        const sensor = new AmbientLightSensor();
+        sensor.addEventListener("reading", () => {
+          setAmbientLight(sensor.illuminance);
+        });
+        sensor.addEventListener("error", (event) => {
+          console.error("Ambient Light Sensor error:", event.error.message);
+        });
+        sensor.start();
+      } catch (error) {
+        console.warn("Error initializing Ambient Light Sensor:", error.message);
       }
     };
 
