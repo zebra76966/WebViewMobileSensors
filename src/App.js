@@ -70,24 +70,24 @@ function App() {
     };
 
     // Ambient Light Sensor
-    const initAmbientLightSensor = () => {
-      if ("AmbientLightSensor" in window) {
-        try {
-          const sensor = new AmbientLightSensor();
-          sensor.addEventListener("reading", () => {
-            setAmbientLight(sensor.illuminance);
-          });
-          sensor.addEventListener("error", (event) => {
-            console.error("Ambient Light Sensor error:", event.error.message);
-          });
-          sensor.start();
-        } catch (error) {
-          console.error("Error initializing Ambient Light Sensor:", error.message);
-        }
-      } else {
-        console.warn("Ambient Light Sensor is not supported by this browser.");
-      }
-    };
+    // const initAmbientLightSensor = () => {
+    //   if ("AmbientLightSensor" in window) {
+    //     try {
+    //       const sensor = new AmbientLightSensor();
+    //       sensor.addEventListener("reading", () => {
+    //         setAmbientLight(sensor.illuminance);
+    //       });
+    //       sensor.addEventListener("error", (event) => {
+    //         console.error("Ambient Light Sensor error:", event.error.message);
+    //       });
+    //       sensor.start();
+    //     } catch (error) {
+    //       console.error("Error initializing Ambient Light Sensor:", error.message);
+    //     }
+    //   } else {
+    //     console.warn("Ambient Light Sensor is not supported by this browser.");
+    //   }
+    // };
 
     // Add Event Listeners for motion and orientation
     window.addEventListener("devicemotion", handleMotion);
@@ -95,7 +95,7 @@ function App() {
 
     // Initial geolocation and sensor initialization
     getGeolocation();
-    initAmbientLightSensor();
+    // initAmbientLightSensor();
 
     // Update geolocation every 1 minute (60000ms)
     const geoInterval = setInterval(getGeolocation, 60000);
