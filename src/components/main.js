@@ -24,7 +24,7 @@ function Main() {
   const [isStart, setIsStart] = useState(false);
   const [isDataSent, setIsDataSent] = useState(false); // Track if the data has been successfully sent
 
-  const ACCELERATION_THRESHOLD = 1;
+  const ACCELERATION_THRESHOLD = 6;
 
   useEffect(() => {
     const handleMotion = (event) => {
