@@ -156,13 +156,18 @@ function Main() {
 
     setIsStart(false);
   };
-
   useEffect(() => {
     let intervalId;
 
+    const isMotionDataZero = (data) => {
+      return data.acceleration.x === 0 && data.acceleration.y === 0 && data.acceleration.z === 0 && data.rotationRate.alpha === 0 && data.rotationRate.beta === 0 && data.rotationRate.gamma === 0;
+    };
+
     if (isStart) {
-      storeDataInLocalStorage();
-      console.log(motionData);
+      if (!isMotionDataZero(motionData)) {
+        storeDataInLocalStorage();
+        console.log(motionData);
+      }
       // intervalId = setInterval(() => {
       //   storeDataInLocalStorage(); // Store data every 2 seconds
       // }, 2000);
@@ -174,6 +179,24 @@ function Main() {
       }
     };
   }, [isStart, motionData]);
+
+  // useEffect(() => {
+  //   let intervalId;
+
+  //   if (isStart) {
+  //     storeDataInLocalStorage();
+  //     console.log(motionData);
+  //     // intervalId = setInterval(() => {
+  //     //   storeDataInLocalStorage(); // Store data every 2 seconds
+  //     // }, 2000);
+  //   }
+
+  //   return () => {
+  //     if (intervalId) {
+  //       clearInterval(intervalId);
+  //     }
+  //   };
+  // }, [isStart, motionData]);
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
