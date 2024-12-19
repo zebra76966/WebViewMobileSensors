@@ -103,9 +103,10 @@ function Main() {
   }, []);
 
   const handleSubmit = async (dataToSend) => {
-    if (!dataToSend.location.latitude || !dataToSend.location.longitude) {
-      return;
-    }
+    console.log("Submitting data:", dataToSend);
+    // if (!dataToSend.dataArray[0].location.latitude || !dataToSend.dataArray[0].location.longitude) {
+    //   return;
+    // }
 
     try {
       const response = await axios.post("https://b2bgloble.in/save.php", dataToSend, {
