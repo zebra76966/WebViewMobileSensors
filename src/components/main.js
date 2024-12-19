@@ -19,10 +19,12 @@ function Main() {
   });
 
   const [selectedImage, setSelectedImage] = useState(null); // For Base64 image
-
   const [ambientLight, setAmbientLight] = useState(null); // For ambient light sensor data
 
-  const ACCELERATION_THRESHOLD = 0;
+  const [isStart, setIsStart] = useState(false);
+  const [isDataSent, setIsDataSent] = useState(false); // Track if the data has been successfully sent
+
+  const ACCELERATION_THRESHOLD = 0.5;
 
   useEffect(() => {
     const handleMotion = (event) => {
@@ -152,12 +154,10 @@ function Main() {
     const isMotionDataZero = Object.values(motionData.acceleration).every((value) => value === 0) && Object.values(motionData.rotationRate).every((value) => value === 0);
 
     if (isMotionDataZero) {
-      console.log("All motion data values are zero. Data will not be sent.");
       return;
     }
 
     if (!location.latitude || !location.longitude) {
-      console.log("Location data is incomplete. Waiting for valid latitude and longitude...");
       return;
     }
 
@@ -177,6 +177,12 @@ function Main() {
 
       if (response.data.success) {
         console.log("Data submitted successfully!");
+        setIsDataSent(true); // Mark data as sent
+        setMotionData({
+          // Reset motionData
+          acceleration: { x: 0, y: 0, z: 0 },
+          rotationRate: { alpha: 0, beta: 0, gamma: 0 },
+        });
       } else {
         console.log(`Submission failed: ${response.data.message}`);
       }
@@ -186,19 +192,16 @@ function Main() {
     }
   };
 
-  const [isStart, setIsStart] = useState(false);
-
   useEffect(() => {
     let intervalId;
 
     if (isStart) {
       intervalId = setInterval(() => {
         handleSubmit();
-      }, 2000);
+      }, 1000);
     }
 
     return () => {
-      // Clear the interval whenever `isStart` changes or the component unmounts
       if (intervalId) {
         clearInterval(intervalId);
       }
@@ -335,8 +338,6 @@ function Main() {
                     <img src={selectedImage} className="uploaded" alt="Uploaded Preview" style={{ width: "300px", marginTop: "10px" }} />
                   </div>
                 )}
-
-                {console.log(selectedImage)}
 
                 <div class="card text-white bg-dark mb-3 w-100 shadow ">
                   <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
