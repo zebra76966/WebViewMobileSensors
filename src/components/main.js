@@ -148,6 +148,14 @@ function Main() {
   };
 
   const handleSubmit = async () => {
+    // Check if all motionData values are zero
+    const isMotionDataZero = Object.values(motionData.acceleration).every((value) => value === 0) && Object.values(motionData.rotationRate).every((value) => value === 0);
+
+    if (isMotionDataZero) {
+      console.log("All motion data values are zero. Data will not be sent.");
+      return;
+    }
+
     if (!location.latitude || !location.longitude) {
       console.log("Location data is incomplete. Waiting for valid latitude and longitude...");
       return;
