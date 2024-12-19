@@ -103,13 +103,6 @@ function Main() {
   }, []);
 
   const handleSubmit = async (dataToSend) => {
-    // Check if all motionData values are zero
-    const isMotionDataZero = Object.values(dataToSend.motionData.acceleration).every((value) => value === 0) && Object.values(dataToSend.motionData.rotationRate).every((value) => value === 0);
-
-    // if (isMotionDataZero) {
-    //   return;
-    // }
-
     if (!dataToSend.location.latitude || !dataToSend.location.longitude) {
       return;
     }
@@ -153,10 +146,8 @@ function Main() {
     const storedData = JSON.parse(localStorage.getItem("motionDataArray")) || [];
 
     if (storedData.length > 0) {
-      // Send the data
-      storedData.forEach((dataItem) => {
-        handleSubmit(dataItem);
-      });
+      // Send the entire data array as one request
+      handleSubmit({ dataArray: storedData });
 
       // Clear the local storage after sending the data
       localStorage.removeItem("motionDataArray");
