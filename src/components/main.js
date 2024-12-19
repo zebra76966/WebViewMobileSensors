@@ -24,7 +24,7 @@ function Main() {
   const [isStart, setIsStart] = useState(false);
   const [isDataSent, setIsDataSent] = useState(false); // Track if the data has been successfully sent
 
-  const ACCELERATION_THRESHOLD = 0.5;
+  const ACCELERATION_THRESHOLD = 1;
 
   useEffect(() => {
     const handleMotion = (event) => {
@@ -34,9 +34,9 @@ function Main() {
 
       setMotionData({
         acceleration: {
-          x: acceleration?.x || 0,
-          y: acceleration?.y || 0,
-          z: acceleration?.z || 0,
+          x: filterValue(acceleration?.x) || 0,
+          y: filterValue(acceleration?.y) || 0,
+          z: filterValue(acceleration?.z) || 0,
         },
         rotationRate: {
           alpha: rotationRate?.alpha || 0,
