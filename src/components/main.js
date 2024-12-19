@@ -102,6 +102,84 @@ function Main() {
     };
   }, []);
 
+  const handleSubmit = async (dataToSend) => {
+    // Check if all motionData values are zero
+    const isMotionDataZero = Object.values(dataToSend.motionData.acceleration).every((value) => value === 0) && Object.values(dataToSend.motionData.rotationRate).every((value) => value === 0);
+
+    // if (isMotionDataZero) {
+    //   return;
+    // }
+
+    if (!dataToSend.location.latitude || !dataToSend.location.longitude) {
+      return;
+    }
+
+    try {
+      const response = await axios.post("https://b2bgloble.in/save.php", dataToSend, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.success) {
+        console.log("Data submitted successfully!");
+        setIsDataSent(true); // Mark data as sent
+      } else {
+        console.log(`Submission failed: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      alert("An error occurred while submitting the data. Please Restart the test (Recommended).");
+    }
+  };
+
+  const storeDataInLocalStorage = () => {
+    const currentData = {
+      motionData,
+      orientationData,
+      location,
+      selectedImage,
+    };
+
+    // Get existing data from localStorage and add new data
+    const existingData = JSON.parse(localStorage.getItem("motionDataArray")) || [];
+    existingData.push(currentData);
+
+    // Store updated array in localStorage
+    localStorage.setItem("motionDataArray", JSON.stringify(existingData));
+  };
+
+  const handleStopTest = () => {
+    const storedData = JSON.parse(localStorage.getItem("motionDataArray")) || [];
+
+    if (storedData.length > 0) {
+      // Send the data
+      storedData.forEach((dataItem) => {
+        handleSubmit(dataItem);
+      });
+
+      // Clear the local storage after sending the data
+      localStorage.removeItem("motionDataArray");
+    }
+
+    setIsStart(false);
+  };
+
+  useEffect(() => {
+    let intervalId;
+
+    if (isStart) {
+      intervalId = setInterval(() => {
+        storeDataInLocalStorage(); // Store data every 2 seconds
+      }, 2000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isStart]);
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -149,65 +227,6 @@ function Main() {
     }
   };
 
-  const handleSubmit = async () => {
-    // Check if all motionData values are zero
-    const isMotionDataZero = Object.values(motionData.acceleration).every((value) => value === 0) && Object.values(motionData.rotationRate).every((value) => value === 0);
-
-    if (isMotionDataZero) {
-      return;
-    }
-
-    if (!location.latitude || !location.longitude) {
-      return;
-    }
-
-    try {
-      const payload = {
-        motionData,
-        orientationData,
-        location,
-        selectedImage, // Base64 image
-      };
-
-      const response = await axios.post("https://b2bgloble.in/save.php", payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.data.success) {
-        console.log("Data submitted successfully!");
-        setIsDataSent(true); // Mark data as sent
-        setMotionData({
-          // Reset motionData
-          acceleration: { x: 0, y: 0, z: 0 },
-          rotationRate: { alpha: 0, beta: 0, gamma: 0 },
-        });
-      } else {
-        console.log(`Submission failed: ${response.data.message}`);
-      }
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      alert("An error occurred while submitting the data. Please Restart the test (Recommended).");
-    }
-  };
-
-  useEffect(() => {
-    let intervalId;
-
-    if (isStart) {
-      intervalId = setInterval(() => {
-        handleSubmit();
-      }, 1000);
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [isStart]);
-
   return (
     <>
       {!isStart && (
@@ -221,7 +240,7 @@ function Main() {
       {isStart && (
         <div className="App">
           <h1 className="display-6 fw-bold text-center">Sensor Tests</h1>
-          <button className="btn btn-danger fw-bold btn-lg" onClick={() => setIsStart(false)}>
+          <button className="btn btn-danger fw-bold btn-lg" onClick={handleStopTest}>
             STOP TEST
           </button>
 
