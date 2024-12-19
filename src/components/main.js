@@ -24,7 +24,7 @@ function Main() {
   const [isStart, setIsStart] = useState(false);
   const [isDataSent, setIsDataSent] = useState(false); // Track if the data has been successfully sent
 
-  const ACCELERATION_THRESHOLD = 3;
+  const ACCELERATION_THRESHOLD = 0;
 
   useEffect(() => {
     const handleMotion = (event) => {
@@ -34,9 +34,9 @@ function Main() {
 
       setMotionData({
         acceleration: {
-          x: filterValue(acceleration?.x || 0),
-          y: filterValue(acceleration?.y || 0),
-          z: filterValue(acceleration?.z || 0),
+          x: acceleration?.x || 0,
+          y: acceleration?.y || 0,
+          z: acceleration?.z || 0,
         },
         rotationRate: {
           alpha: rotationRate?.alpha || 0,
@@ -171,7 +171,7 @@ function Main() {
     if (isStart) {
       intervalId = setInterval(() => {
         storeDataInLocalStorage(); // Store data every 2 seconds
-      }, 1000);
+      }, 2000);
     }
 
     return () => {
@@ -180,7 +180,6 @@ function Main() {
       }
     };
   }, [isStart]);
-
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
