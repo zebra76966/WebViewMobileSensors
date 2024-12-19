@@ -22,7 +22,7 @@ function Main() {
 
   const [ambientLight, setAmbientLight] = useState(null); // For ambient light sensor data
 
-  const ACCELERATION_THRESHOLD = 0.5;
+  const ACCELERATION_THRESHOLD = 0;
 
   useEffect(() => {
     const handleMotion = (event) => {
