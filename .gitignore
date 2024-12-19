@@ -10,6 +10,7 @@
 
 # production
 /build
+/serverPhp
 
 # misc
 .DS_Store
