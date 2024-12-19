@@ -171,7 +171,7 @@ function Main() {
     if (isStart) {
       intervalId = setInterval(() => {
         storeDataInLocalStorage(); // Store data every 2 seconds
-      }, 500);
+      }, 1000);
     }
 
     return () => {
@@ -179,7 +179,8 @@ function Main() {
         clearInterval(intervalId);
       }
     };
-  }, [isStart, motionData]);
+  }, [isStart]);
+
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
