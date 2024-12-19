@@ -169,9 +169,11 @@ function Main() {
     let intervalId;
 
     if (isStart) {
-      intervalId = setInterval(() => {
-        storeDataInLocalStorage(); // Store data every 2 seconds
-      }, 2000);
+      storeDataInLocalStorage();
+      console.log(motionData);
+      // intervalId = setInterval(() => {
+      //   storeDataInLocalStorage(); // Store data every 2 seconds
+      // }, 2000);
     }
 
     return () => {
@@ -179,7 +181,8 @@ function Main() {
         clearInterval(intervalId);
       }
     };
-  }, [isStart]);
+  }, [isStart, motionData]);
+
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
