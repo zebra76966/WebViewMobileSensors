@@ -161,20 +161,15 @@ function Main() {
   const isMotionDataBad = (motionData, orientationData) => {
     const accelerationThreshold = 6;
     const rotationThreshold = 5;
-    const orientationThreshold = 20;
 
     // Check if acceleration_z is above the threshold
     const isAccelerationBad = Math.abs(motionData.acceleration.z) > accelerationThreshold;
 
-    // Check if rotation values are above the threshold
-    const isRotationBad =
-      Math.abs(motionData.rotationRate.alpha) > rotationThreshold || Math.abs(motionData.rotationRate.beta) > rotationThreshold || Math.abs(motionData.rotationRate.gamma) > rotationThreshold;
-
-    // Check if orientation values are above the threshold
-    const isOrientationBad = Math.abs(orientationData.alpha) > orientationThreshold || Math.abs(orientationData.beta) > orientationThreshold || Math.abs(orientationData.gamma) > orientationThreshold;
+    // Check if any rotation values exceed the threshold
+    const isRotationBad = Math.abs(orientationData.alpha) > rotationThreshold || Math.abs(orientationData.beta) > rotationThreshold || Math.abs(orientationData.gamma) > rotationThreshold;
 
     // Return true if any of the conditions are met (i.e., bad road detected)
-    return isAccelerationBad || isRotationBad || isOrientationBad;
+    return isAccelerationBad || isRotationBad;
   };
 
   // Monitor motionData and orientationData to check for bad road conditions
