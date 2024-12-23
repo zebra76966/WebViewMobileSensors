@@ -157,10 +157,21 @@ function Main() {
     setIsStart(false);
   };
 
-  // Helper function to check if motion data indicates bad road conditions
   const isMotionDataBad = (motionData) => {
     const accelerationThreshold = 6;
     const rotationThreshold = 5;
+
+    // Check if all motion data values are zero
+    const isMotionDataZero =
+      motionData.acceleration.x === 0 &&
+      motionData.acceleration.y === 0 &&
+      motionData.acceleration.z === 0 &&
+      motionData.rotationRate.alpha === 0 &&
+      motionData.rotationRate.beta === 0 &&
+      motionData.rotationRate.gamma === 0;
+
+    // If motion data is zero, return false
+    if (isMotionDataZero) return false;
 
     // Check if acceleration_z is above the threshold
     const isAccelerationBad = Math.abs(motionData.acceleration.z) > accelerationThreshold;
@@ -173,7 +184,7 @@ function Main() {
     return isAccelerationBad || isRotationBad;
   };
 
-  // Monitor motionData and orientationData to check for bad road conditions
+  // Monitor motionData to check for bad road conditions
   useEffect(() => {
     if (isStart) {
       if (isMotionDataBad(motionData)) {
