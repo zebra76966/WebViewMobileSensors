@@ -4,7 +4,7 @@ import Main from "./components/main";
 import Dashboard from "./components/dashboard";
 
 function App() {
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(true);
 
   return (
     <>
