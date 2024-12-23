@@ -158,7 +158,7 @@ function Main() {
   };
 
   // Helper function to check if motion data indicates bad road conditions
-  const isMotionDataBad = (motionData, orientationData) => {
+  const isMotionDataBad = (motionData) => {
     const accelerationThreshold = 6;
     const rotationThreshold = 5;
 
@@ -166,7 +166,8 @@ function Main() {
     const isAccelerationBad = Math.abs(motionData.acceleration.z) > accelerationThreshold;
 
     // Check if any rotation values exceed the threshold
-    const isRotationBad = Math.abs(orientationData.alpha) > rotationThreshold || Math.abs(orientationData.beta) > rotationThreshold || Math.abs(orientationData.gamma) > rotationThreshold;
+    const isRotationBad =
+      Math.abs(motionData.rotationRate.alpha) > rotationThreshold || Math.abs(motionData.rotationRate.beta) > rotationThreshold || Math.abs(motionData.rotationRate.gamma) > rotationThreshold;
 
     // Return true if any of the conditions are met (i.e., bad road detected)
     return isAccelerationBad || isRotationBad;
@@ -175,12 +176,12 @@ function Main() {
   // Monitor motionData and orientationData to check for bad road conditions
   useEffect(() => {
     if (isStart) {
-      if (isMotionDataBad(motionData, orientationData)) {
+      if (isMotionDataBad(motionData)) {
         storeDataInLocalStorage();
-        console.log("Bad road detected:", motionData, orientationData);
+        console.log("Bad road detected:", motionData);
       }
     }
-  }, [motionData, orientationData, isStart]);
+  }, [motionData, isStart]);
 
   // useEffect(() => {
   //   let intervalId;
