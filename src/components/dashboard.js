@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { AccelerationChart, RotationOrientationChart } from "./charts/chartdemo";
 import MapPath from "./charts/maps";
+import datas from "./charts/actualdata.json";
 const Dashboard = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(datas);
 
   // const GetData = async () => {
   //   try {
@@ -28,18 +29,20 @@ const Dashboard = () => {
 
   return (
     <div className="container-fluid">
-      <div className="row">
-        <div className="col-lg-6">
-          <AccelerationChart />
-        </div>
-        <div className="col-lg-6">
-          <RotationOrientationChart />
-        </div>
+      {data && data.length !== 0 && (
+        <div className="row">
+          <div className="col-lg-6">
+            <AccelerationChart data={data} />
+          </div>
+          <div className="col-lg-6">
+            <RotationOrientationChart data={data} />
+          </div>
 
-        <div className="col-lg-12 my-4 mx-auto d-flex align-items-center justify-content-center">
-          <MapPath />
+          <div className="col-lg-12 my-4 mx-auto d-flex align-items-center justify-content-center">
+            <MapPath data={data} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -3,11 +3,14 @@ import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet"
 import { LatLng } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
-import datas from "./actualdata.json";
 
-// Sample data for the latitude and longitude
-const customIcon = new Icon({ iconSize: [25, 41], iconAnchor: [10, 41], popupAnchor: [2, -40], iconUrl: "geo-alt-fill.svg" });
-const data = datas;
+// Custom icon for markers
+const customIcon = new Icon({
+  iconSize: [25, 41],
+  iconAnchor: [10, 41],
+  popupAnchor: [2, -40],
+  iconUrl: "geo-alt-fill.svg",
+});
 
 // Function to determine if road conditions are bad based on the thresholds
 const isBadRoadCondition = (dataPoint) => {
@@ -24,10 +27,12 @@ const isBadRoadCondition = (dataPoint) => {
   const isBadRotation = rotationAlpha > 5 || rotationBeta > 5 || rotationGamma > 5;
   const isBadOrientation = orientationAlpha > 20 || orientationBeta > 20 || orientationGamma > 20;
 
+  console.log("Acceleration Z: ", isBadAcceleration || isBadRotation || isBadOrientation);
+
   return isBadAcceleration || isBadRotation || isBadOrientation;
 };
 
-const MapPath = () => {
+const MapPath = ({ data }) => {
   // Filter out data with null latitude and longitude
   const validCoordinates = data.filter((entry) => entry.latitude !== null && entry.longitude !== null).map((entry) => [entry.latitude, entry.longitude]);
 
@@ -43,13 +48,18 @@ const MapPath = () => {
         const nextBad = isBadRoadCondition(nextData);
 
         // Define the color for this segment based on the road condition
-        const lineColor = currentBad || nextBad ? "red" : "blue";
+        const lineColor =
+          currentBad && nextBad
+            ? "red" // Both are bad
+            : !currentBad && !nextBad
+            ? "blue" // Both are good
+            : "yellow"; // One is bad, one is good
 
         return <Polyline key={index} positions={[validCoordinates[index], validCoordinates[index + 1]]} color={lineColor} weight={4} />;
       }
       return null;
     });
-  }, [validCoordinates, data]);
+  }, [validCoordinates]);
 
   // Start and end markers' coordinates
   const start = validCoordinates[0]; // First coordinate in the list
@@ -57,11 +67,26 @@ const MapPath = () => {
 
   return (
     <div className="w-100 h-100 d-flex justify-content-between align-items-center">
-      <div className="h-100" style={{ padding: "10px", backgroundColor: "#f9f9f9", borderRadius: "5px", boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}>
+      <div
+        className="h-100"
+        style={{
+          padding: "10px",
+          backgroundColor: "#f9f9f9",
+          borderRadius: "5px",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        }}
+      >
         <h3>Road Condition Legend</h3>
         <div style={{ marginBottom: "10px" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ width: "20px", height: "20px", backgroundColor: "blue", marginRight: "10px" }}></div>
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                backgroundColor: "blue",
+                marginRight: "10px",
+              }}
+            ></div>
             <span>
               <strong>Good Road</strong>: Blue - Road conditions are normal. No significant bumps or instability.
             </span>
@@ -69,7 +94,14 @@ const MapPath = () => {
         </div>
         <div className="my-4">
           <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ width: "20px", height: "20px", backgroundColor: "red", marginRight: "10px" }}></div>
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                backgroundColor: "red",
+                marginRight: "10px",
+              }}
+            ></div>
             <span>
               <strong>Bad Road</strong>: Red - Indicating significant bumps, potholes, or unstable road conditions.
             </span>
@@ -79,13 +111,13 @@ const MapPath = () => {
         <h4>Thresholds for Bad Road Conditions:</h4>
         <ul>
           <li>
-            <strong>Acceleration (acceleration_z):</strong> Any value > 6 m/s² (Significant bumps or potholes)
+            <strong>Acceleration (acceleration_z):</strong> Any value &gt; 6 m/s² (Significant bumps or potholes)
           </li>
           <li>
-            <strong>Rotation (rotation_alpha, rotation_beta, rotation_gamma):</strong> Any value > ±5° (Instability in road surface)
+            <strong>Rotation (rotation_alpha, rotation_beta, rotation_gamma):</strong> Any value &gt; ±5° (Instability in road surface)
           </li>
           <li>
-            <strong>Orientation (orientation_alpha, orientation_beta, orientation_gamma):</strong> Any value > ±20° (Tilted or uneven road surface)
+            <strong>Orientation (orientation_alpha, orientation_beta, orientation_gamma):</strong> Any value &gt; ±20° (Tilted or uneven road surface)
           </li>
         </ul>
       </div>
