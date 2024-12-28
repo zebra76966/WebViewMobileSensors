@@ -199,7 +199,7 @@ function Main() {
         // Set interval to store data every 2 seconds
         intervalId = setInterval(() => {
           storeDataInLocalStorage();
-        }, 5000);
+        }, 2000);
       }
     }
 

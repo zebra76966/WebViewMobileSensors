@@ -29,7 +29,7 @@ const isBadRoadCondition = (dataPoint) => {
 
   console.log("Acceleration Z: ", isBadAcceleration || isBadRotation || isBadOrientation);
 
-  return isBadAcceleration || isBadRotation || isBadOrientation;
+  return isBadAcceleration;
 };
 
 const MapPath = ({ data }) => {
