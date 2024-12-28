@@ -191,9 +191,9 @@ function Main() {
     if (isStart) {
       if (isMotionDataBad(motionData)) {
         storeDataInLocalStorage();
-        if (intervalId) {
-          clearInterval(intervalId); // Clear the interval if the data is bad
-        }
+        // if (intervalId) {
+        //   clearInterval(intervalId); // Clear the interval if the data is bad
+        // }
         console.log("Bad road detected:", motionData);
       } else {
         // Set interval to store data every 2 seconds
