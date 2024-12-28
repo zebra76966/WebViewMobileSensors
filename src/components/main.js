@@ -191,16 +191,15 @@ function Main() {
     if (isStart) {
       if (isMotionDataBad(motionData)) {
         storeDataInLocalStorage();
-        // if (intervalId) {
-        //   clearInterval(intervalId); // Clear the interval if the data is bad
-        // }
+        if (intervalId) {
+          clearInterval(intervalId); // Clear the interval if the data is bad
+        }
         console.log("Bad road detected:", motionData);
-      } else {
-        // Set interval to store data every 2 seconds
-        intervalId = setInterval(() => {
-          storeDataInLocalStorage();
-        }, 2000);
       }
+      // Set interval to store data every 2 seconds
+      intervalId = setInterval(() => {
+        storeDataInLocalStorage();
+      }, 2000);
     }
 
     return () => {
@@ -280,7 +279,7 @@ function Main() {
       {!isStart && (
         <div className="App w-100 d-flex align-items-center justify-content-center" style={{ height: "100dvh" }}>
           <button className="btn btn-dark fw-bold btn-lg" onClick={() => setIsStart(true)}>
-            START TEST
+            START TEST v4
           </button>
         </div>
       )}
