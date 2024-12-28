@@ -186,18 +186,21 @@ function Main() {
 
   // Monitor motionData to check for bad road conditions
   useEffect(() => {
-    let intervalId;
-
     if (isStart) {
       if (isMotionDataBad(motionData)) {
         storeDataInLocalStorage();
-        if (intervalId) {
-          clearInterval(intervalId); // Clear the interval if the data is bad
-        }
+
         console.log("Bad road detected:", motionData);
       }
+    }
+  }, [motionData, isStart]);
+
+  useEffect(() => {
+    let intervalId;
+
+    if (isStart) {
       // Set interval to store data every 2 seconds
-      intervalId = setInterval(() => {
+      setInterval(() => {
         storeDataInLocalStorage();
       }, 2000);
     }
@@ -207,7 +210,7 @@ function Main() {
         clearInterval(intervalId); // Cleanup on component unmount or dependency change
       }
     };
-  }, [motionData, isStart]);
+  }, [isStart]);
 
   // useEffect(() => {
   //   let intervalId;
