@@ -136,6 +136,7 @@ function Main() {
     if (isStart && isDataBad()) {
       const dataPoint = { ...motionData, ...orientationData, ...location, timestamp: Date.now() };
       const storedData = JSON.parse(localStorage.getItem("roadData")) || [];
+      alert("location", location);
       storedData.push(dataPoint);
       localStorage.setItem("roadData", JSON.stringify(storedData));
     }
