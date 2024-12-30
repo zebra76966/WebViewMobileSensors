@@ -4,28 +4,28 @@ import { AccelerationChart, RotationOrientationChart } from "./charts/chartdemo"
 import MapPath from "./charts/maps";
 import datas from "./charts/actualdata.json";
 const Dashboard = () => {
-  const [data, setData] = useState(datas.reverse());
+  const [data, setData] = useState();
 
-  // const GetData = async () => {
-  //   try {
-  //     const response = await axios.post("https://b2bgloble.in/getdata.php", {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
+  const GetData = async () => {
+    try {
+      const response = await axios.post("https://b2bgloble.in/getdata.php", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  //     if (response.data.success) {
-  //       console.log(response.data);
-  //       setData(response.data.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting data:", error);
-  //   }
-  // };
+      if (response.data.success) {
+        console.log(response.data);
+        setData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error);
+    }
+  };
 
-  // useEffect(() => {
-  //   GetData();
-  // }, []);
+  useEffect(() => {
+    GetData();
+  }, []);
 
   return (
     <div className="container-fluid">

@@ -37,8 +37,9 @@ function Main() {
         geoWatchId = navigator.geolocation.watchPosition(
           (position) => {
             const { latitude, longitude, accuracy } = position.coords;
+            console.log("herer");
 
-            if (accuracy < 20) {
+            if (latitude && longitude) {
               // Only use accurate data
               setLocation({ latitude, longitude, accuracy });
               setPathData((prev) => [...prev, { latitude, longitude }]);
@@ -60,6 +61,26 @@ function Main() {
 
     return () => {
       if (geoWatchId) navigator.geolocation.clearWatch(geoWatchId);
+    };
+  }, [isStart]);
+
+  useEffect(() => {
+    const handleOrientation = (event) => {
+      setOrientationData({
+        alpha: event.alpha || 0,
+        beta: event.beta || 0,
+        gamma: event.gamma || 0,
+      });
+    };
+
+    if (isStart && typeof DeviceOrientationEvent !== "undefined") {
+      window.addEventListener("deviceorientation", handleOrientation);
+    } else {
+      window.removeEventListener("deviceorientation", handleOrientation);
+    }
+
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation);
     };
   }, [isStart]);
 
@@ -108,7 +129,7 @@ function Main() {
     };
 
     if (isStart && isDataBad()) {
-      const dataPoint = { ...motionData, ...location, timestamp: Date.now() };
+      const dataPoint = { ...motionData, ...orientationData, ...location, timestamp: Date.now() };
       const storedData = JSON.parse(localStorage.getItem("roadData")) || [];
       storedData.push(dataPoint);
       localStorage.setItem("roadData", JSON.stringify(storedData));
