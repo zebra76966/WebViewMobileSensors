@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 function Main() {
+  useEffect(() => {
+    // Initial cleanUp===>
+    localStorage.removeItem("roadData");
+  }, []);
+
   const [motionData, setMotionData] = useState({
     acceleration: { x: 0, y: 0, z: 0 },
     rotationRate: { alpha: 0, beta: 0, gamma: 0 },
