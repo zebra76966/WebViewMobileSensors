@@ -135,10 +135,10 @@ function Main() {
 
     if (isStart && isDataBad() && location.latitude && location.longitude) {
       const dataPoint = { ...motionData, ...orientationData, ...location, timestamp: Date.now() };
-      // const storedData = JSON.parse(localStorage.getItem("roadData")) || [];
+      const storedData = JSON.parse(localStorage.getItem("roadData")) || [];
       // alert("location", location.latitude);
-      // storedData.push(dataPoint);
-      // localStorage.setItem("roadData", JSON.stringify(storedData));
+      storedData.push(dataPoint);
+      localStorage.setItem("roadData", JSON.stringify(storedData));
     }
   }, [motionData, location, isStart]);
 
