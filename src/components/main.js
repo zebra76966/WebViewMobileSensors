@@ -234,12 +234,7 @@ function Main() {
 
             {redereData &&
               redereData.map((ini) => {
-                return (
-                  <p>
-                    "herer"
-                    {/* longitude:{ini.location.longitude}, latitude:{ini.location.latitude}, Acceleration Z:{ini.motionData.acceleration.z}{" "} */}
-                  </p>
-                );
+                return <p>"herer" longitude:{ini.location.longitude},</p>;
               })}
           </div>
         </div>
