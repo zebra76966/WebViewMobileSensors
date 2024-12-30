@@ -236,7 +236,7 @@ function Main() {
               redereData.map((ini) => {
                 return (
                   <p>
-                    longitude:{ini.location.longitude}, latitude:{ini.location.latitude}, Acceleration Z:{ini.motion.acceleration.z}{" "}
+                    longitude:{ini.location.longitude}, latitude:{ini.location.latitude}, Acceleration Z:{ini.motionData.acceleration.z}{" "}
                   </p>
                 );
               })}
