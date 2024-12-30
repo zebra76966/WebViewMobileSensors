@@ -134,7 +134,23 @@ function Main() {
     };
 
     if (isStart && isDataBad() && location.latitude && location.longitude) {
-      const dataPoint = { ...motionData, ...orientationData, ...location, timestamp: Date.now() };
+      const dataPoint = {
+        motionData: {
+          acceleration: motionData.acceleration,
+          rotationRate: motionData.rotationRate,
+        },
+        orientationData: {
+          alpha: orientationData.alpha,
+          beta: orientationData.beta,
+          gamma: orientationData.gamma,
+        },
+        location: {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        },
+        timestamp: Date.now(),
+        selectedImage: selectedImage, // If applicable, otherwise remove this key
+      };
       const storedData = JSON.parse(localStorage.getItem("roadData")) || [];
       // alert("location", location.latitude);
       storedData.push(dataPoint);
