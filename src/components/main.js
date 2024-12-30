@@ -142,6 +142,8 @@ function Main() {
     }
   }, [motionData, location, isStart]);
 
+  const [redereData, setRenderData] = useState([]);
+
   // Handle Test Start/Stop
   const handleStart = () => {
     setPathData([]);
@@ -153,7 +155,9 @@ function Main() {
 
     // Optional: Submit data to server
     const data = JSON.parse(localStorage.getItem("roadData")) || [];
-    handleSubmit({ dataArray: data });
+    setRenderData(data);
+
+    // handleSubmit({ dataArray: data });
 
     // Clear local storage
     localStorage.removeItem("roadData");
@@ -223,9 +227,20 @@ function Main() {
     <>
       {!isStart ? (
         <div className="App w-100 d-flex align-items-center justify-content-center" style={{ height: "100dvh" }}>
-          <button className="btn btn-dark fw-bold btn-lg" onClick={handleStart}>
-            START TEST v4
-          </button>
+          <div>
+            <button className="btn btn-dark fw-bold btn-lg" onClick={handleStart}>
+              START TEST v4
+            </button>
+
+            {redereData &&
+              redereData.map((ini) => {
+                return (
+                  <p>
+                    longitude:{ini.location.longitude}, latitude:{ini.location.latitude}, Acceleration Z:{ini.motion.acceleration.z}{" "}
+                  </p>
+                );
+              })}
+          </div>
         </div>
       ) : (
         <div className="App">
