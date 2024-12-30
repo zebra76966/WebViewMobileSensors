@@ -171,9 +171,9 @@ function Main() {
 
     // Optional: Submit data to server
     const data = JSON.parse(localStorage.getItem("roadData")) || [];
-    setRenderData(localStorage.getItem("roadData"));
+    // setRenderData(localStorage.getItem("roadData"));
 
-    // handleSubmit({ dataArray: data });
+    handleSubmit({ dataArray: data });
 
     // Clear local storage
     localStorage.removeItem("roadData");
@@ -247,14 +247,6 @@ function Main() {
             <button className="btn btn-dark fw-bold btn-lg" onClick={handleStart}>
               START TEST v4
             </button>
-
-            {redereData && (
-              <p>
-                {redereData}
-
-                {/* longitude:{ini.location.longitude}, latitude:{ini.location.latitude}, Acceleration Z:{ini.motionData.acceleration.z}{" "} */}
-              </p>
-            )}
           </div>
         </div>
       ) : (
