@@ -234,7 +234,7 @@ function Main() {
 
             {redereData &&
               redereData.map((ini) => {
-                return <p>"herer" longitude:{ini.location.longitude},</p>;
+                return <p>"herer" longitude:{ini.location["longitude"]},</p>;
               })}
           </div>
         </div>
