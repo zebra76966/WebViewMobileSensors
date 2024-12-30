@@ -16,16 +16,54 @@ function Main() {
   const [location, setLocation] = useState({
     latitude: null,
     longitude: null,
+    accuracy: null,
   });
 
   const [selectedImage, setSelectedImage] = useState(null); // For Base64 image
   const [ambientLight, setAmbientLight] = useState(null); // For ambient light sensor data
 
+  const [pathData, setPathData] = useState([]);
   const [isStart, setIsStart] = useState(false);
-  const [isDataSent, setIsDataSent] = useState(false); // Track if the data has been successfully sent
 
   const ACCELERATION_THRESHOLD = 6;
+  const ROTATION_THRESHOLD = 5;
 
+  // Geolocation Handler
+  useEffect(() => {
+    let geoWatchId;
+
+    const startGeolocation = () => {
+      if (navigator.geolocation) {
+        geoWatchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const { latitude, longitude, accuracy } = position.coords;
+
+            if (accuracy < 20) {
+              // Only use accurate data
+              setLocation({ latitude, longitude, accuracy });
+              setPathData((prev) => [...prev, { latitude, longitude }]);
+            }
+          },
+          (error) => console.error("Geolocation error:", error.message),
+          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    };
+
+    if (isStart) {
+      startGeolocation();
+    } else if (geoWatchId) {
+      navigator.geolocation.clearWatch(geoWatchId);
+    }
+
+    return () => {
+      if (geoWatchId) navigator.geolocation.clearWatch(geoWatchId);
+    };
+  }, [isStart]);
+
+  // Motion Sensor Handler
   useEffect(() => {
     const handleMotion = (event) => {
       const { acceleration, rotationRate } = event;
@@ -46,189 +84,66 @@ function Main() {
       });
     };
 
-    const handleOrientation = (event) => {
-      const { alpha, beta, gamma } = event;
-
-      setOrientationData({
-        alpha: alpha || 0,
-        beta: beta || 0,
-        gamma: gamma || 0,
-      });
-    };
-
-    const getGeolocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            setLocation({ latitude, longitude });
-          },
-          (error) => {
-            console.error("Error fetching geolocation:", error.message);
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-      }
-    };
-
-    const initAmbientLightSensor = () => {
-      try {
-        const sensor = new AmbientLightSensor();
-        sensor.addEventListener("reading", () => {
-          setAmbientLight(sensor.illuminance);
-        });
-        sensor.addEventListener("error", (event) => {
-          console.error("Ambient Light Sensor error:", event.error.message);
-        });
-        sensor.start();
-      } catch (error) {
-        console.warn("Ambient Light Sensor is not supported on this device.");
-      }
-    };
-
-    window.addEventListener("devicemotion", handleMotion);
-    window.addEventListener("deviceorientation", handleOrientation);
-
-    getGeolocation();
-    initAmbientLightSensor();
-
-    const geoInterval = setInterval(getGeolocation, 60000); // 1-minute interval
-
-    return () => {
-      clearInterval(geoInterval);
+    if (isStart) {
+      window.addEventListener("devicemotion", handleMotion);
+    } else {
       window.removeEventListener("devicemotion", handleMotion);
-      window.removeEventListener("deviceorientation", handleOrientation);
-    };
-  }, []);
-
-  const handleSubmit = async (dataToSend) => {
-    console.log("Submitting data:", dataToSend);
-    // if (!dataToSend.dataArray[0].location.latitude || !dataToSend.dataArray[0].location.longitude) {
-    //   return;
-    // }
-
-    try {
-      const response = await axios.post("https://b2bgloble.in/save.php", dataToSend, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.data.success) {
-        console.log("Data submitted successfully!");
-        setIsDataSent(true); // Mark data as sent
-      } else {
-        console.log(`Submission failed: ${response.data.message}`);
-      }
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      alert("An error occurred while submitting the data. Please Restart the test (Recommended).");
-    }
-  };
-
-  const storeDataInLocalStorage = () => {
-    const currentData = {
-      motionData,
-      orientationData,
-      location,
-      selectedImage,
-    };
-
-    // Get existing data from localStorage and add new data
-    const existingData = JSON.parse(localStorage.getItem("motionDataArray")) || [];
-    existingData.push(currentData);
-
-    // Store updated array in localStorage
-    localStorage.setItem("motionDataArray", JSON.stringify(existingData));
-  };
-
-  const handleStopTest = () => {
-    const storedData = JSON.parse(localStorage.getItem("motionDataArray")) || [];
-
-    if (storedData.length > 0) {
-      // Send the entire data array as one request
-      handleSubmit({ dataArray: storedData });
-
-      // Clear the local storage after sending the data
-      localStorage.removeItem("motionDataArray");
-    }
-
-    setIsStart(false);
-  };
-
-  const isMotionDataBad = (motionData) => {
-    const accelerationThreshold = 6;
-    const rotationThreshold = 5;
-
-    // Check if all motion data values are zero
-    const isMotionDataZero =
-      motionData.acceleration.x === 0 &&
-      motionData.acceleration.y === 0 &&
-      motionData.acceleration.z === 0 &&
-      motionData.rotationRate.alpha === 0 &&
-      motionData.rotationRate.beta === 0 &&
-      motionData.rotationRate.gamma === 0;
-
-    // If motion data is zero, return false
-    if (isMotionDataZero) return false;
-
-    // Check if acceleration_z is above the threshold
-    const isAccelerationBad = Math.abs(motionData.acceleration.z) > accelerationThreshold;
-
-    // Check if any rotation values exceed the threshold
-    const isRotationBad =
-      Math.abs(motionData.rotationRate.alpha) > rotationThreshold || Math.abs(motionData.rotationRate.beta) > rotationThreshold || Math.abs(motionData.rotationRate.gamma) > rotationThreshold;
-
-    // Return true if any of the conditions are met (i.e., bad road detected)
-    return isAccelerationBad || isRotationBad;
-  };
-
-  // Monitor motionData to check for bad road conditions
-  useEffect(() => {
-    if (isStart) {
-      if (isMotionDataBad(motionData)) {
-        storeDataInLocalStorage();
-
-        console.log("Bad road detected:", motionData);
-      }
-    }
-  }, [motionData, isStart]);
-
-  useEffect(() => {
-    let intervalId;
-
-    if (isStart) {
-      // Set interval to store data every 2 seconds
-      setInterval(() => {
-        storeDataInLocalStorage();
-      }, 2000);
     }
 
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId); // Cleanup on component unmount or dependency change
-      }
+      window.removeEventListener("devicemotion", handleMotion);
     };
   }, [isStart]);
 
-  // useEffect(() => {
-  //   let intervalId;
+  // Store Data for Analysis
+  useEffect(() => {
+    const isDataBad = () => {
+      const { acceleration, rotationRate } = motionData;
+      return (
+        Math.abs(acceleration.z) > ACCELERATION_THRESHOLD ||
+        Math.abs(rotationRate.alpha) > ROTATION_THRESHOLD ||
+        Math.abs(rotationRate.beta) > ROTATION_THRESHOLD ||
+        Math.abs(rotationRate.gamma) > ROTATION_THRESHOLD
+      );
+    };
 
-  //   if (isStart) {
-  //     storeDataInLocalStorage();
-  //     console.log(motionData);
-  //     // intervalId = setInterval(() => {
-  //     //   storeDataInLocalStorage(); // Store data every 2 seconds
-  //     // }, 2000);
-  //   }
+    if (isStart && isDataBad()) {
+      const dataPoint = { ...motionData, ...location, timestamp: Date.now() };
+      const storedData = JSON.parse(localStorage.getItem("roadData")) || [];
+      storedData.push(dataPoint);
+      localStorage.setItem("roadData", JSON.stringify(storedData));
+    }
+  }, [motionData, location, isStart]);
 
-  //   return () => {
-  //     if (intervalId) {
-  //       clearInterval(intervalId);
-  //     }
-  //   };
-  // }, [isStart, motionData]);
+  // Handle Test Start/Stop
+  const handleStart = () => {
+    setPathData([]);
+    setIsStart(true);
+  };
+
+  const handleStop = () => {
+    setIsStart(false);
+
+    // Optional: Submit data to server
+    const data = JSON.parse(localStorage.getItem("roadData")) || [];
+    handleSubmit({ dataArray: data });
+
+    // Clear local storage
+    localStorage.removeItem("roadData");
+  };
+
+  const handleSubmit = async (data) => {
+    try {
+      const response = await axios.post("https://b2bgloble.in/save.php", data, {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.data.success) {
+        console.log("Data submitted successfully!");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+    }
+  };
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -279,19 +194,17 @@ function Main() {
 
   return (
     <>
-      {!isStart && (
+      {!isStart ? (
         <div className="App w-100 d-flex align-items-center justify-content-center" style={{ height: "100dvh" }}>
-          <button className="btn btn-dark fw-bold btn-lg" onClick={() => setIsStart(true)}>
+          <button className="btn btn-dark fw-bold btn-lg" onClick={handleStart}>
             START TEST v4
           </button>
         </div>
-      )}
-
-      {isStart && (
+      ) : (
         <div className="App">
           <h1 className="display-6 fw-bold text-center">Sensor Tests</h1>
-          <button className="btn btn-danger fw-bold btn-lg" onClick={handleStopTest}>
-            STOP TEST
+          <button className="btn btn-danger fw-bold btn-lg" onClick={handleStop}>
+            STOP TEST V5 Geo Acc
           </button>
 
           <div className="container-fluid mt-4">

@@ -4,7 +4,7 @@ import { AccelerationChart, RotationOrientationChart } from "./charts/chartdemo"
 import MapPath from "./charts/maps";
 import datas from "./charts/actualdata.json";
 const Dashboard = () => {
-  const [data, setData] = useState(datas);
+  const [data, setData] = useState(datas.reverse());
 
   // const GetData = async () => {
   //   try {
