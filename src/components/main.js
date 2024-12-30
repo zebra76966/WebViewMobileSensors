@@ -142,7 +142,7 @@ function Main() {
     }
   }, [motionData, location, isStart]);
 
-  const [redereData, setRenderData] = useState([]);
+  const [redereData, setRenderData] = useState("");
 
   // Handle Test Start/Stop
   const handleStart = () => {
@@ -155,7 +155,7 @@ function Main() {
 
     // Optional: Submit data to server
     const data = JSON.parse(localStorage.getItem("roadData")) || [];
-    setRenderData(data);
+    setRenderData(localStorage.getItem("roadData"));
 
     // handleSubmit({ dataArray: data });
 
@@ -232,10 +232,13 @@ function Main() {
               START TEST v4
             </button>
 
-            {redereData &&
-              redereData.map((ini) => {
-                return <p>"herer" longitude:{ini.location["longitude"]},</p>;
-              })}
+            {redereData && (
+              <p>
+                {redereData}
+
+                {/* longitude:{ini.location.longitude}, latitude:{ini.location.latitude}, Acceleration Z:{ini.motionData.acceleration.z}{" "} */}
+              </p>
+            )}
           </div>
         </div>
       ) : (
