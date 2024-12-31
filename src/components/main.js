@@ -191,12 +191,12 @@ function Main() {
       console.error("Error playing start sound:", error);
     });
 
-    const audio2 = new Audio(confirmVoice);
-    setTimeout(() => {
-      audio2.play().catch((error) => {
-        console.error("Error playing start sound:", error);
-      });
-    }, 1000);
+    // const audio2 = new Audio(confirmVoice);
+    // setTimeout(() => {
+    //   audio2.play().catch((error) => {
+    //     console.error("Error playing start sound:", error);
+    //   });
+    // }, 1000);
 
     setIsStart(false);
 
@@ -292,7 +292,7 @@ function Main() {
           </button> */}
 
             <div className="container-fluid mt-4">
-              <div className="row">
+              <div className="row d-none">
                 <div className="col-12">
                   <div class="card text-white bg-darkOpac mb-3 w-100 shadow ">
                     <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
