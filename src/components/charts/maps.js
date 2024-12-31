@@ -23,9 +23,9 @@ const isBadRoadCondition = (dataPoint) => {
   const orientationGamma = Math.abs(parseFloat(dataPoint.orientation_gamma));
 
   // Bad road condition thresholds
-  const isBadAcceleration = accelerationZ > 6;
-  const isBadRotation = rotationAlpha > 5 || rotationBeta > 5 || rotationGamma > 5;
-  const isBadOrientation = orientationAlpha > 20 || orientationBeta > 20 || orientationGamma > 20;
+  const isBadAcceleration = accelerationZ > 9;
+  const isBadRotation = rotationAlpha > 8 || rotationBeta > 8 || rotationGamma > 9;
+  const isBadOrientation = orientationAlpha > 25 || orientationBeta > 25 || orientationGamma > 25;
 
   console.log("Acceleration Z: ", isBadAcceleration || isBadRotation || isBadOrientation);
 

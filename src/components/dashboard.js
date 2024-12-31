@@ -1,31 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { AccelerationChart, RotationOrientationChart } from "./charts/chartdemo";
 import MapPath from "./charts/maps";
 import datas from "./charts/actualdata.json";
 const Dashboard = () => {
-  const [data, setData] = useState();
+  const [data, setData] = useState(datas);
 
-  const GetData = async () => {
-    try {
-      const response = await axios.post("https://b2bgloble.in/getdata.php", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  // Define the function inside useEffect or use useCallback to memoize it
+  // const GetData = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       "https://b2bgloble.in/getdata.php",
+  //       {},
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      if (response.data.success) {
-        console.log(response.data);
-        setData(response.data.data);
-      }
-    } catch (error) {
-      console.error("Error submitting data:", error);
-    }
-  };
+  //     if (response.data.success) {
+  //       console.log(response.data);
+  //       setData(response.data.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting data:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    GetData();
-  }, []);
+  // const hasFetched = useRef(false);
+
+  // useEffect(() => {
+  //   if (!hasFetched.current) {
+  //     hasFetched.current = true;
+  //     GetData();
+  //   }
+  // }, []);
 
   return (
     <div className="container-fluid">

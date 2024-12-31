@@ -6,16 +6,15 @@ import Dashboard from "./components/dashboard";
 function App() {
   const [toggle, setToggle] = useState(true);
 
-  return (
-    <>
-      <div className="w-100 text-end d-none d-lg-block">
-        <button className="btn btn-lg btn-dark m-3" onClick={() => setToggle(!toggle)}>
-          Dashboard
-        </button>
-      </div>
-      {toggle ? <Main /> : <Dashboard />}
-    </>
-  );
+  useEffect(() => {
+    if (window.location.pathname == "/dashboard") {
+      setToggle(false);
+    } else {
+      setToggle(true);
+    }
+  }, []);
+
+  return <>{toggle ? <Main /> : <Dashboard />}</>;
 }
 
 export default App;

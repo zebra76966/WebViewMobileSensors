@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Button from "./button";
 
 function Main() {
   useEffect(() => {
@@ -160,13 +161,43 @@ function Main() {
 
   const [redereData, setRenderData] = useState("");
 
+  const startVoice = "/started.mp3";
+  const endVoice = "/saved.mp3";
+  const confirmVoice = "/confirm2.mp3";
+  const startSound = "/startSound1.mp3";
+  const endSound = "/endSound.mp3";
+
   // Handle Test Start/Stop
   const handleStart = () => {
+    const audio = new Audio(startSound);
+    audio.play().catch((error) => {
+      console.error("Error playing start sound:", error);
+    });
+
+    const audio2 = new Audio(startVoice);
+    setTimeout(() => {
+      audio2.play().catch((error) => {
+        console.error("Error playing start sound:", error);
+      });
+    }, 1000);
+
     setPathData([]);
     setIsStart(true);
   };
 
   const handleStop = () => {
+    const audio = new Audio(endSound);
+    audio.play().catch((error) => {
+      console.error("Error playing start sound:", error);
+    });
+
+    const audio2 = new Audio(confirmVoice);
+    setTimeout(() => {
+      audio2.play().catch((error) => {
+        console.error("Error playing start sound:", error);
+      });
+    }, 1000);
+
     setIsStart(false);
 
     // Optional: Submit data to server
@@ -180,12 +211,17 @@ function Main() {
   };
 
   const handleSubmit = async (data) => {
+    const audio2 = new Audio(endVoice);
     try {
       const response = await axios.post("https://b2bgloble.in/save.php", data, {
         headers: { "Content-Type": "application/json" },
       });
       if (response.data.success) {
         console.log("Data submitted successfully!");
+
+        audio2.play().catch((error) => {
+          console.error("Error playing start sound:", error);
+        });
       }
     } catch (error) {
       console.error("Submission error:", error);
@@ -241,165 +277,164 @@ function Main() {
 
   return (
     <>
-      {!isStart ? (
-        <div className="App w-100 d-flex align-items-center justify-content-center" style={{ height: "100dvh" }}>
-          <div>
-            <button className="btn btn-dark fw-bold btn-lg" onClick={handleStart}>
-              START TEST v4
-            </button>
-          </div>
+      <div className={`App w-100 d-flex align-items-center justify-content-center bg-dark screenMain ${isStart ? "shrink" : ""}`}>
+        <div>
+          <Button isStart={isStart} handleStart={handleStart} handleStop={handleStop} />
         </div>
-      ) : (
-        <div className="App">
-          <h1 className="display-6 fw-bold text-center">Sensor Tests</h1>
-          <button className="btn btn-danger fw-bold btn-lg" onClick={handleStop}>
+      </div>
+
+      <div className={`App bg-dark screenData ${!isStart ? "shrinkDown" : ""}`}>
+        {isStart && (
+          <>
+            <h1 className="fs-3 fw-bold text-center text-muted pt-5">Motion Data</h1>
+            {/* <button className="btn btn-danger fw-bold btn-lg" onClick={handleStop}>
             STOP TEST V5 Geo Acc
-          </button>
+          </button> */}
 
-          <div className="container-fluid mt-4">
-            <h2 className="display-6 fw-bold text-start text-muted">Motion</h2>
-            <div className="row">
-              <div className="col-12">
-                <div class="card text-white bg-primary mb-3 w-100 shadow ">
-                  <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
-                    Acceleration (m/s²)
-                    <i className="fa fa-tachometer fs-2"></i>
-                  </div>
-                  <div class="card-body">
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100">X:</h5>
-                      <h5 class="card-titled w-100">{motionData.acceleration.x.toFixed(2)}</h5>
+            <div className="container-fluid mt-4">
+              <div className="row">
+                <div className="col-12">
+                  <div class="card text-white bg-darkOpac mb-3 w-100 shadow ">
+                    <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
+                      Acceleration (m/s²)
+                      <i className="fa fa-tachometer fs-2"></i>
                     </div>
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100">Y:</h5>
-                      <h5 class="card-titled w-100">{motionData.acceleration.y.toFixed(2)}</h5>
-                    </div>
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100">Z:</h5>
-                      <h5 class="card-titled w-100">{motionData.acceleration.z.toFixed(2)}</h5>
+                    <div class="card-body">
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100">X:</h5>
+                        <h5 class="card-titled w-100">{motionData.acceleration.x.toFixed(2)}</h5>
+                      </div>
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100">Y:</h5>
+                        <h5 class="card-titled w-100">{motionData.acceleration.y.toFixed(2)}</h5>
+                      </div>
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100">Z:</h5>
+                        <h5 class="card-titled w-100">{motionData.acceleration.z.toFixed(2)}</h5>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-12">
-                <div class="card text-white bg-dark mb-3 w-100 shadow ">
-                  <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
-                    Rotation Rate (deg/s)
-                    <i className="fa fa-rotate-left fs-2"></i>
-                  </div>
-                  <div class="card-body">
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100">Alpha:</h5>
-                      <h5 class="card-titled w-100">{motionData.rotationRate.alpha.toFixed(2)}</h5>
+                <div className="col-12">
+                  <div class="card text-white bg-darkOpac mb-3 w-100 shadow ">
+                    <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
+                      Rotation Rate (deg/s)
+                      <i className="fa fa-rotate-left fs-2"></i>
                     </div>
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100">Beta:</h5>
-                      <h5 class="card-titled w-100"> {motionData.rotationRate.beta.toFixed(2)}</h5>
-                    </div>
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100">Gamma:</h5>
-                      <h5 class="card-titled w-100">{motionData.rotationRate.gamma.toFixed(2)}</h5>
+                    <div class="card-body">
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100">Alpha:</h5>
+                        <h5 class="card-titled w-100">{motionData.rotationRate.alpha.toFixed(2)}</h5>
+                      </div>
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100">Beta:</h5>
+                        <h5 class="card-titled w-100"> {motionData.rotationRate.beta.toFixed(2)}</h5>
+                      </div>
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100">Gamma:</h5>
+                        <h5 class="card-titled w-100">{motionData.rotationRate.gamma.toFixed(2)}</h5>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-12">
-                <div class="card text-white bg-warning mb-3 w-100 shadow ">
-                  <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
-                    Orientation(deg/s)
-                    <i className="fa fa-ellipsis-v fs-2"></i>
-                  </div>
-                  <div class="card-body">
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100"> Alpha:</h5>
-                      <h5 class="card-titled w-100"> {orientationData.alpha.toFixed(2)}</h5>
+                <div className="col-12">
+                  <div class="card text-white bg-darkOpac mb-3 w-100 shadow ">
+                    <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
+                      Orientation(deg/s)
+                      <i className="fa fa-ellipsis-v fs-2"></i>
                     </div>
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100"> Beta:</h5>
-                      <h5 class="card-titled w-100"> {orientationData.beta.toFixed(2)}</h5>
-                    </div>
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100"> Gamma:</h5>
-                      <h5 class="card-titled w-100"> {orientationData.gamma.toFixed(2)}</h5>
+                    <div class="card-body">
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100"> Alpha:</h5>
+                        <h5 class="card-titled w-100"> {orientationData.alpha.toFixed(2)}</h5>
+                      </div>
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100"> Beta:</h5>
+                        <h5 class="card-titled w-100"> {orientationData.beta.toFixed(2)}</h5>
+                      </div>
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100"> Gamma:</h5>
+                        <h5 class="card-titled w-100"> {orientationData.gamma.toFixed(2)}</h5>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-12">
-                <div class="card text-white bg-info mb-3 w-100 shadow ">
-                  <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
-                    Location
-                    <i className="fa fa-location-arrow fs-2"></i>
-                  </div>
-                  <div class="card-body">
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100"> Latitude: </h5>
-                      <h5 class="card-titled w-100"> {location.latitude?.toFixed(2) || "Fetching..."}</h5>
+                <div className="col-12 mb-5">
+                  <div class="card text-white bg-darkOpac mb-3 w-100 shadow ">
+                    <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
+                      Location
+                      <i className="fa fa-location-arrow fs-2"></i>
                     </div>
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100"> Longitude: </h5>
-                      <h5 class="card-titled w-100"> {location.longitude?.toFixed(2) || "Fetching..."}</h5>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-12">
-                <div class="card text-white  mb-3 w-100 shadow " style={{ background: "coral" }}>
-                  <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
-                    Ambient Light
-                    <i className="fa fa-sun-o fs-2"></i>
-                  </div>
-                  <div class="card-body">
-                    <div className="w-100 d-flex align-items-center justify-content-between">
-                      <h5 class="card-titled w-100"> Illuminance: </h5>
-                      <h5 class="card-titled w-100"> {ambientLight !== null ? `${ambientLight} lux` : "Fetching..."}</h5>
+                    <div class="card-body">
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100"> Latitude: </h5>
+                        <h5 class="card-titled w-100"> {location.latitude?.toFixed(2) || "Fetching..."}</h5>
+                      </div>
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100"> Longitude: </h5>
+                        <h5 class="card-titled w-100"> {location.longitude?.toFixed(2) || "Fetching..."}</h5>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-12">
-                {selectedImage && (
-                  <div className="my-2">
-                    <h3 className="text-muted fs-3 fw-bold">Uploaded Image:</h3>
-                    <img src={selectedImage} className="uploaded" alt="Uploaded Preview" style={{ width: "300px", marginTop: "10px" }} />
-                  </div>
-                )}
-
-                <div class="card text-white bg-dark mb-3 w-100 shadow ">
-                  <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
-                    Camera
-                    <i className="fa fa-camera fs-2"></i>
-                  </div>
-                  <div class="card-body">
-                    <div className="w-100 ">
-                      <label htmlFor="file" class="custum-file-upload">
-                        <div class="icon display-2">
-                          <i className="fa fa-camera-retro" />
-                        </div>
-                        <div class="text">
-                          <span>Click to upload image</span>
-                        </div>
-                        <input id="file" type="file" accept="image/*" onChange={handleImageUpload} />
-                      </label>
+                <div className="col-12 d-none">
+                  <div class="card text-white bg-darkOpac mb-3 w-100 shadow " style={{ background: "coral" }}>
+                    <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
+                      Ambient Light
+                      <i className="fa fa-sun-o fs-2"></i>
+                    </div>
+                    <div class="card-body">
+                      <div className="w-100 d-flex align-items-center justify-content-between">
+                        <h5 class="card-titled w-100"> Illuminance: </h5>
+                        <h5 class="card-titled w-100"> {ambientLight !== null ? `${ambientLight} lux` : "Fetching..."}</h5>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* <div className="col-12 text-center py-5">
+                <div className="col-12 d-none">
+                  {selectedImage && (
+                    <div className="my-2">
+                      <h3 className="text-muted fs-3 fw-bold">Uploaded Image:</h3>
+                      <img src={selectedImage} className="uploaded" alt="Uploaded Preview" style={{ width: "300px", marginTop: "10px" }} />
+                    </div>
+                  )}
+
+                  <div class="card text-white bg-darkOpac mb-3 w-100 shadow ">
+                    <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
+                      Camera
+                      <i className="fa fa-camera fs-2"></i>
+                    </div>
+                    <div class="card-body">
+                      <div className="w-100 ">
+                        <label htmlFor="file" class="custum-file-upload">
+                          <div class="icon display-2">
+                            <i className="fa fa-camera-retro" />
+                          </div>
+                          <div class="text">
+                            <span>Click to upload image</span>
+                          </div>
+                          <input id="file" type="file" accept="image/*" onChange={handleImageUpload} />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* <div className="col-12 text-center py-5">
             <button className="btn btn-lg btn-dark rounded shadow" onClick={handleSubmit}>
               Submit
             </button>
           </div> */}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </>
   );
 }
