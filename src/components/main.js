@@ -193,12 +193,12 @@ function Main({ uemailG, sessionG }) {
       console.error("Error playing start sound:", error);
     });
 
-    const audio2 = new Audio(confirmVoice);
-    setTimeout(() => {
-      audio2.play().catch((error) => {
-        console.error("Error playing start sound:", error);
-      });
-    }, 1000);
+    // const audio2 = new Audio(confirmVoice);
+    // setTimeout(() => {
+    //   audio2.play().catch((error) => {
+    //     console.error("Error playing start sound:", error);
+    //   });
+    // }, 1000);
 
     setIsStart(false);
 
