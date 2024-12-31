@@ -236,8 +236,8 @@
   left: 0;
   right: 0;
   opacity: 0.08;
-  mask-image: linear-gradient(transparent 5%, white 30%, white 70%, transparent 95%);
-  filter: grayscale(1);
+  /* mask-image: linear-gradient(transparent 5%, white 30%, white 70%, transparent 95%);
+  filter: grayscale(1); */
 }
 
 /** STATES */

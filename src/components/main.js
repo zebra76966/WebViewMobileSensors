@@ -292,7 +292,7 @@ function Main() {
           </button> */}
 
             <div className="container-fluid mt-4">
-              <div className="row d-none">
+              <div className="row ">
                 <div className="col-12">
                   <div class="card text-white bg-darkOpac mb-3 w-100 shadow ">
                     <div class="card-header fw-bold d-flex align-items-center justify-content-between ">
