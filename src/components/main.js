@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "./button";
 
-function Main() {
+function Main({ uemailG, sessionG }) {
   useEffect(() => {
     // Initial cleanUp===>
     localStorage.removeItem("roadData");
@@ -151,6 +151,8 @@ function Main() {
         },
         timestamp: Date.now(),
         selectedImage: selectedImage, // If applicable, otherwise remove this key
+        email: uemailG,
+        session: sessionG,
       };
       const storedData = JSON.parse(localStorage.getItem("roadData")) || [];
       // alert("location", location.latitude);

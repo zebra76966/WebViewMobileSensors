@@ -1,0 +1,16 @@
+.help-form {
+  border-radius: 2em;
+
+  border: 1px solid #222222;
+}
+
+.help-form button,
+.help-form input {
+  border-radius: 1.8em;
+  border: 1px solid #222222;
+}
+
+.help-form textarea {
+  border-radius: 0.8em;
+  border: 1px solid #222222;
+}
