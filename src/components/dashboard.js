@@ -5,7 +5,7 @@ import MapPath from "./charts/maps";
 import datas from "./charts/actualdata.json";
 import Loader from "./laoder";
 const Dashboard = ({ uemailG, sessionG }) => {
-  const [data, setData] = useState(datas);
+  const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Define the function inside useEffect or use useCallback to memoize it
@@ -38,12 +38,12 @@ const Dashboard = ({ uemailG, sessionG }) => {
 
   const hasFetched = useRef(false);
 
-  // useEffect(() => {
-  //   if (!hasFetched.current) {
-  //     hasFetched.current = true;
-  //     GetData();
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!hasFetched.current) {
+      hasFetched.current = true;
+      GetData();
+    }
+  }, []);
 
   const [activeDash, setActiveDash] = useState("map");
 
