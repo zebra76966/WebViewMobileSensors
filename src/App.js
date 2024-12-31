@@ -18,11 +18,29 @@ function App() {
     }
   }, []);
 
+  const [splash, setSplash] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSplash(false);
+    }, 1500);
+  }, []);
+
   return (
     <>
-      {sessionG == "" && uemailG == "" && <FeedBack setSessionG={(e) => setSessionG(e)} setUemailG={(e) => setUemailG(e)} />}
+      {splash && (
+        <div className="w-100" style={{ height: "100dvh" }}>
+          <img src="./splash.png" className="h-100 w-100" style={{ objectFit: "contain" }} />
+        </div>
+      )}
 
-      {sessionG !== "" && uemailG !== "" && <>{toggle ? <Main uemailG={uemailG} sessionG={sessionG} /> : <Dashboard uemailG={uemailG} sessionG={sessionG} />}</>}
+      {!splash && (
+        <>
+          {sessionG == "" && uemailG == "" && <FeedBack setSessionG={(e) => setSessionG(e)} setUemailG={(e) => setUemailG(e)} />}
+
+          {sessionG !== "" && uemailG !== "" && <>{toggle ? <Main uemailG={uemailG} sessionG={sessionG} /> : <Dashboard uemailG={uemailG} sessionG={sessionG} />}</>}
+        </>
+      )}
     </>
   );
 }
