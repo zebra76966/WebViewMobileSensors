@@ -68,7 +68,7 @@ const Button = ({ isStart, handleStart, handleStop }) => {
         <div class="bg-glow"></div>
       </label>
 
-      <div class="noise">
+      {/* <div class="noise">
         <svg height="100%" width="100%">
           <defs>
             <pattern height="500" width="500" patternUnits="userSpaceOnUse" id="noise-pattern">
@@ -81,7 +81,7 @@ const Button = ({ isStart, handleStart, handleStop }) => {
           </defs>
           <rect fill="url(#noise-pattern)" height="100%" width="100%"></rect>
         </svg>
-      </div>
+      </div> */}
     </>
   );
 };
