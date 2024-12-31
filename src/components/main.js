@@ -283,11 +283,10 @@ function Main() {
         </div>
       </div>
 
-      {/* <div className={`App bg-dark screenData ${!isStart ? "shrinkDown" : ""}`}>
+      <div className={`bg-dark screenData ${!isStart ? "shrinkDown" : ""}`}>
         {isStart && (
           <>
             <h1 className="fs-3 fw-bold text-center text-muted pt-5">Motion Data</h1>
-   
 
             <div className="container-fluid mt-4">
               <div className="row ">
@@ -422,12 +421,11 @@ function Main() {
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           </>
         )}
-      </div> */}
+      </div>
     </>
   );
 }
