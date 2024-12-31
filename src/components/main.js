@@ -193,20 +193,23 @@ function Main({ uemailG, sessionG }) {
       console.error("Error playing start sound:", error);
     });
 
-    // const audio2 = new Audio(confirmVoice);
-    // setTimeout(() => {
-    //   audio2.play().catch((error) => {
-    //     console.error("Error playing start sound:", error);
-    //   });
-    // }, 1000);
+    const audio2 = new Audio(confirmVoice);
+    setTimeout(() => {
+      audio2.play().catch((error) => {
+        console.error("Error playing start sound:", error);
+      });
+    }, 1000);
 
     setIsStart(false);
 
     // Optional: Submit data to server
     const data = JSON.parse(localStorage.getItem("roadData")) || [];
     // setRenderData(localStorage.getItem("roadData"));
+    console.log(data);
 
     handleSubmit({ dataArray: data });
+    console.log("email", uemailG);
+    console.log("sessionG", sessionG);
 
     // Clear local storage
     localStorage.removeItem("roadData");
