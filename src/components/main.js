@@ -134,7 +134,7 @@ function Main({ uemailG, sessionG }) {
       );
     };
 
-    if (isStart && isDataBad() && location.latitude && location.longitude) {
+    if (isStart && location.latitude && location.longitude) {
       const dataPoint = {
         motionData: {
           acceleration: motionData.acceleration,
