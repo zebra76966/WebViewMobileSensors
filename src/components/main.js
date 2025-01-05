@@ -31,8 +31,8 @@ function Main({ uemailG, sessionG }) {
   const [pathData, setPathData] = useState([]);
   const [isStart, setIsStart] = useState(false);
 
-  const ACCELERATION_THRESHOLD = 6;
-  const ROTATION_THRESHOLD = 5;
+  const ACCELERATION_THRESHOLD = 1;
+  const ROTATION_THRESHOLD = 0.5;
 
   // Geolocation Handler
   useEffect(() => {
@@ -134,7 +134,7 @@ function Main({ uemailG, sessionG }) {
       );
     };
 
-    if (isStart && location.latitude && location.longitude) {
+    if (isStart && isDataBad && location.latitude && location.longitude) {
       const dataPoint = {
         motionData: {
           acceleration: motionData.acceleration,
