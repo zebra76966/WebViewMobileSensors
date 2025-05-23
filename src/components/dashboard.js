@@ -13,7 +13,7 @@ const Dashboard = ({ uemailG, sessionG }) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "https://b2bgloble.in/getdata.php",
+        "https://eknows.in/getdata.php",
         {
           email: uemailG,
           session: sessionG,
