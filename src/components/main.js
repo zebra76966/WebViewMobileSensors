@@ -218,7 +218,7 @@ function Main({ uemailG, sessionG }) {
   const handleSubmit = async (data) => {
     const audio2 = new Audio(endVoice);
     try {
-      const response = await axios.post("https://b2bgloble.in/save.php", data, {
+      const response = await axios.post("https://eknows.in/save.php", data, {
         headers: { "Content-Type": "application/json" },
       });
       if (response.data.success) {
