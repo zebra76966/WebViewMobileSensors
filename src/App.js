@@ -36,7 +36,7 @@ function App() {
 
       {!splash && (
         <>
-          {sessionG == "" && uemailG == "" && <FeedBack setSessionG={(e) => setSessionG(e)} setUemailG={(e) => setUemailG(e)} />}
+          {sessionG == "" && uemailG == "" && <FeedBack setSessionG={(e) => setSessionG(e)} setUemailG={(e) => setUemailG(e)} toggle={toggle} />}
 
           {sessionG !== "" && uemailG !== "" && <>{toggle ? <Main uemailG={uemailG} sessionG={sessionG} /> : <Dashboard uemailG={uemailG} sessionG={sessionG} />}</>}
         </>
